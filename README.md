@@ -1,5 +1,6 @@
 # Github Outdated Repo Notifier
 Allows you to setup a daily Telegram notification for all your out of date Github repos.
+
 The amount of days required to consider a repo out of date is configurable.
 
 # Setup
