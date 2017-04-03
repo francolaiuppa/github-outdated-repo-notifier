@@ -1,10 +1,11 @@
 # Github Outdated Repo Notifier
-Allows you to setup a daily Telegram notification for all your out of date Github repos.
+Files to setup a daily Telegram notification for all your out of date Github repos.
 
 The amount of days required to consider a repo out of date is configurable.
 
 # Setup
 1.Create a [webtask](https://webtask.io) based on the [index.js](https://raw.githubusercontent.com/francolaiuppa/github-outdated-repo-notifier/master/index.js) file.
+
 2.Configure the following secrets:
 
 - TELEGRAM_TOKEN
@@ -12,4 +13,4 @@ The amount of days required to consider a repo out of date is configurable.
 - GITHUB_USERNAME
 
 # More info
-Please see the blog post at francolaiuppa.com
+Please see the blog post at [francolaiuppa.com](https://francolaiuppa.com)
