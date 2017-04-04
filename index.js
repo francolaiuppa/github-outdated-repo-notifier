@@ -2,6 +2,33 @@ const request = require('request@2.67.0');
 const moment = require('moment@2.11.2');
 const TelegramBot = require('node-telegram-bot-api@0.21.1');
 const OUTDATED_DAYS = 10;
+const IGNORE_DESCRIPTION_MATCHING = ['\[DEPRECATED\]'];
+const IGNORE_NAME_MATCHING = ['demo'];
+
+function isOutdated(days) {
+  return (days >= OUTDATED_DAYS) ? true : false;
+}
+
+function hasMatchingPattern(search,pattern) {
+  return (search.indexOf(pattern) === -1) ? false : true;
+}
+
+function containsOnlyFalseValues(element) {
+  return (element === false);
+}
+
+function hasMatchingPatterns(repo) {
+  var results = IGNORE_NAME_MATCHING.map(function(pattern){
+    return hasMatchingPattern(repo.name,pattern);
+  });
+  if (!results.every(containsOnlyFalseValues)) { return true; }
+
+  results = IGNORE_DESCRIPTION_MATCHING.map(function(pattern){
+    return hasMatchingPattern(repo.description,pattern);
+  });
+  if (!results.every(containsOnlyFalseValues)) { return true; }
+  return false;
+}
 
 function filterOutdatedRepos(data) {
   var outdatedRepos = [];
@@ -10,7 +37,8 @@ function filterOutdatedRepos(data) {
     var end = moment(repo.updated_at);
     var duration = moment.duration(now.diff(end));
     var days = duration.asDays();
-    if (days >= OUTDATED_DAYS) {
+    if (!repo.description) { repo.description = ''; }
+    if (isOutdated(days) && !hasMatchingPatterns(repo)) {
       outdatedRepos.push({
         name: repo.name,
         url: repo.html_url,
@@ -23,11 +51,11 @@ function filterOutdatedRepos(data) {
 
 function getMessage(outdatedRepos) {
   const MESSAGE_UP_TO_DATE = 'All your repos have been updated in the last '+OUTDATED_DAYS+' days, good job!';
-  const MESSAGE_NOT_UP_TO_DATE = 'You have repos that haven\'t been updated in the last '+OUTDATED_DAYS+' days';
+  const MESSAGE_NOT_UP_TO_DATE = 'You have repos that haven\'t been updated in the last *'+OUTDATED_DAYS+'* or more days.\nPlease add `\[DEPRECATED\]` to the repo(s) description if you aren\'t maintaining them anymore. \n';
   if (outdatedRepos.length === 0) { return MESSAGE_UP_TO_DATE; }
   var message = MESSAGE_NOT_UP_TO_DATE;
   outdatedRepos.forEach(function(repo) {
-    message += '\n ['+repo.name+']('+repo.url+') hasn\'t received an update in '+parseInt(repo.outdatedDays)+' days.';
+    message += '\n ['+repo.name+']('+repo.url+') *'+parseInt(repo.outdatedDays)+'* days ago.';
   });
   return message;
 }
