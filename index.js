@@ -3,7 +3,7 @@ const moment = require('moment@2.11.2');
 const TelegramBot = require('node-telegram-bot-api@0.21.1');
 const OUTDATED_DAYS = 10;
 const IGNORE_DESCRIPTION_MATCHING = ['\[DEPRECATED\]'];
-const IGNORE_NAME_MATCHING = ['demo'];
+const IGNORE_NAME_MATCHING = ['demo','example'];
 
 function isOutdated(days) {
   return (days >= OUTDATED_DAYS) ? true : false;
